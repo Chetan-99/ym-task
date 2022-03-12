@@ -6,6 +6,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Button,
 } from "@mui/material";
 import React from "react";
 
@@ -16,15 +17,26 @@ function SearchHeader(props) {
     setAge(event.target.value);
   };
 
+  // return (
+  //   <Grid container>
+  //     <Grid item lg={6} style={{ textAlign: "center" }}>
+  //       <Button>xs=8</Button>
+  //     </Grid>
+  //     <Grid item lg={6}>
+  //       <Button>xs=8</Button>
+  //     </Grid>
+  //   </Grid>
+  // );
+
   return (
     <Grid
       container
-      marginBottom={"2%"}
-      spacing={2}
-      width={"98%"}
-      marginLeft={"0.1em"}
+      // marginBottom={"2%"}
+      // spacing={2}
+      // width={"98%"}
+      // marginLeft={"0.1em"}
     >
-      <Grid item xs={0} md={2} lg={2}></Grid>
+      {/* <Grid item xs={0} md={2} lg={2}></Grid> */}
       <Grid item xs={12} lg={2} md={2}>
         <Box sx={{ textAlign: "center" }}>
           <FormControl fullWidth>
@@ -36,7 +48,7 @@ function SearchHeader(props) {
           </FormControl>
         </Box>
       </Grid>
-      <Grid item xs={12} lg={8} md={8}>
+      <Grid item xs={12} lg={10} md={10}>
         <TextField fullWidth label="Search" variant="outlined" />
       </Grid>
     </Grid>

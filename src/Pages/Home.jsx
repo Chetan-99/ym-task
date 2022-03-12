@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  Container,
   Paper,
   Table,
   TableBody,
@@ -93,7 +94,7 @@ export default function HomeTable() {
   }
 
   return (
-    <>
+    <Container maxWidth="lg">
       <SearchHeader />
       <Paper
         sx={{
@@ -147,6 +148,6 @@ export default function HomeTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-    </>
+    </Container>
   );
 }
