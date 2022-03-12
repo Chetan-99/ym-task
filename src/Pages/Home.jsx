@@ -1,42 +1,49 @@
 import * as React from "react";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import { getData } from "../components/getData";
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+} from "@mui/material";
+import {
+  getData,
+  sortDataWithName,
+  sortDataWithGender,
+  sortDataWithEmail,
+} from "../components/getData";
+import TableHeader from "../components/TableHeader";
+import SearchHeader from "../components/SearchHeader";
 
 const columns = [
-  { id: "name", label: "Name", minWidth: 100, align: "left" },
-  { id: "gender", label: "Gender", minWidth: 50, align: "center" },
+  { id: "name", label: "Name", minWidth: 100, align: "center" },
+  { id: "gender", label: "Gender", minWidth: 100, align: "center" },
   {
     id: "email",
     label: "Email",
     minWidth: 100,
-    align: "right",
+    align: "center",
   },
 ];
-
-let rows = [];
 
 export default function HomeTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [data, setData] = React.useState([]);
+  const [nameOrder, setNameOrder] = React.useState(false);
+  const [genderOrder, setGenderOrder] = React.useState(false);
+  const [emailOrder, setEmailOrder] = React.useState(false);
 
   React.useEffect(() => {
     initialize();
   }, []);
 
-  React.useEffect(() => {}, [data]);
-
   async function initialize() {
     await getData(100)
       .then((res) => {
-        console.log(res);
         setData(res);
       })
       .catch((er) => {
@@ -53,52 +60,93 @@ export default function HomeTable() {
     setPage(0);
   };
 
+  function columnData(cId, rId) {
+    return cId === "name"
+      ? `${data[rId + page][cId]["title"]} ${data[rId + page][cId]["first"]} ${
+          data[rId + page][cId]["last"]
+        }`
+      : data[rId + page][cId];
+  }
+
+  function handleHeaderButton(id) {
+    switch (id) {
+      case "name": {
+        setNameOrder(!nameOrder);
+        const newData = sortDataWithName(data, nameOrder);
+        setData(newData);
+        break;
+      }
+      case "gender": {
+        setGenderOrder(!genderOrder);
+        const newData = sortDataWithGender(data, genderOrder);
+        setData(newData);
+        break;
+      }
+      case "email": {
+        setEmailOrder(!emailOrder);
+        const newData = sortDataWithEmail(data, emailOrder);
+        setData(newData);
+        break;
+      }
+      default:
+    }
+  }
+
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {row["name"]["title"]}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={data.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
+    <>
+      <SearchHeader />
+      <Paper
+        sx={{
+          overflow: "hidden",
+          marginLeft: "1em",
+          marginRight: "1em",
+        }}
+      >
+        <TableContainer sx={{ maxHeight: "90%" }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                <TableHeader
+                  columns={columns}
+                  handleClick={handleHeaderButton}
+                  arrowOrder={[nameOrder, genderOrder, emailOrder]}
+                />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, rowIndex) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={rowIndex}
+                    >
+                      {columns.map((column, columnIndex) => {
+                        return (
+                          <TableCell key={columnIndex} align={column.align}>
+                            {columnData(column.id, rowIndex)}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={data.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+    </>
   );
 }
