@@ -9,26 +9,33 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Grid,
 } from "@mui/material";
 import {
   getData,
   sortDataWithName,
   sortDataWithGender,
   sortDataWithEmail,
+  searchName,
+  searchGender,
+  searchEmail,
+  generateExcel,
 } from "../components/getData";
 import TableHeader from "../components/TableHeader";
 import SearchHeader from "../components/SearchHeader";
 
 const columns = [
-  { id: "name", label: "Name", minWidth: 100, align: "center" },
-  { id: "gender", label: "Gender", minWidth: 100, align: "center" },
+  { id: "name", label: "Name", minWidth: 100, align: "left" },
+  { id: "gender", label: "Gender", minWidth: 100, align: "left" },
   {
     id: "email",
     label: "Email",
     minWidth: 100,
-    align: "center",
+    align: "left",
   },
 ];
+
+let globalData = [];
 
 export default function HomeTable() {
   const [page, setPage] = React.useState(0);
@@ -45,6 +52,7 @@ export default function HomeTable() {
   async function initialize() {
     await getData(100)
       .then((res) => {
+        globalData = res;
         setData(res);
       })
       .catch((er) => {
@@ -61,12 +69,37 @@ export default function HomeTable() {
     setPage(0);
   };
 
+  const handleCSV = () => {
+    generateExcel(data);
+  };
+
+  function handleSearch(category, text) {
+    if (text !== "") {
+      if (category === "name") setData(searchName(text, globalData));
+      else if (category === "gender") setData(searchGender(text, globalData));
+      else if (category === "email") setData(searchEmail(text, globalData));
+    } else if (text === "") setData(globalData);
+  }
+
   function columnData(cId, rId) {
-    return cId === "name"
-      ? `${data[rId + page][cId]["title"]} ${data[rId + page][cId]["first"]} ${
-          data[rId + page][cId]["last"]
-        }`
-      : data[rId + page][cId];
+    if (cId === "name") {
+      return (
+        <Grid container>
+          <Grid item style={{ marginRight: "10px" }}>
+            <img
+              style={{ borderRadius: "50%" }}
+              src={data[rId + page]["picture"]}
+              alt="thumbNail"
+            />
+          </Grid>
+          <Grid item style={{ marginTop: "10px" }}>
+            {`${data[rId + page][cId]["title"]} ${
+              data[rId + page][cId]["first"]
+            } ${data[rId + page][cId]["last"]}`}
+          </Grid>
+        </Grid>
+      );
+    } else return data[rId + page][cId];
   }
 
   function handleHeaderButton(id) {
@@ -95,12 +128,16 @@ export default function HomeTable() {
 
   return (
     <Container maxWidth="lg">
-      <SearchHeader />
+      <SearchHeader
+        handleSearch={handleSearch}
+        handleExport={handleCSV}
+        data={data}
+      />
       <Paper
         sx={{
           overflow: "hidden",
-          marginLeft: "1em",
-          marginRight: "1em",
+          // marginLeft: "1em",
+          // marginRight: "1em",
         }}
       >
         <TableContainer sx={{ maxHeight: "90%" }}>

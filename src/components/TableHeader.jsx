@@ -19,10 +19,20 @@ function TableHeader({ columns, handleClick, arrowOrder }) {
             </span>
             <span>
               {arrowOrder[index] && (
-                <ArrowDownward style={{ opacity: 0.75, color: "#3f50b5" }} />
+                <ArrowDownward
+                  style={{
+                    opacity: 0.75,
+                    color: "#3f50b5",
+                  }}
+                />
               )}
               {!arrowOrder[index] && (
-                <ArrowUpward style={{ opacity: 0.75, color: "#3f50b5" }} />
+                <ArrowUpward
+                  style={{
+                    opacity: 0.75,
+                    color: "#3f50b5",
+                  }}
+                />
               )}
             </span>
           </div>

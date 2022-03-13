@@ -3,53 +3,88 @@ import {
   TextField,
   Box,
   FormControl,
-  InputLabel,
   MenuItem,
   Select,
   Button,
 } from "@mui/material";
 import React from "react";
+import { generateExcel } from "./getData";
+const { CSVLink } = require("react-csv");
 
-function SearchHeader(props) {
-  const [age, setAge] = React.useState(10);
+function SearchHeader({ handleSearch, handleExport, data }) {
+  const [cat, setcat] = React.useState(0);
+  const [searchText, setSearchText] = React.useState("");
+
+  React.useEffect(() => {
+    if (cat === 0) handleSearch("name", searchText);
+    else if (cat === 1) handleSearch("gender", searchText);
+    else if (cat === 2) handleSearch("email", searchText);
+  }, [searchText, cat]);
+
+  React.useEffect(() => {
+    setSearchText("");
+  }, [cat]);
 
   const handleChange = (event) => {
-    setAge(event.target.value);
+    setcat(event.target.value);
   };
 
-  // return (
-  //   <Grid container>
-  //     <Grid item lg={6} style={{ textAlign: "center" }}>
-  //       <Button>xs=8</Button>
-  //     </Grid>
-  //     <Grid item lg={6}>
-  //       <Button>xs=8</Button>
-  //     </Grid>
-  //   </Grid>
-  // );
+  const handleSearchText = (event) => {
+    setSearchText(event.target.value);
+  };
 
   return (
     <Grid
       container
-      // marginBottom={"2%"}
-      // spacing={2}
+      marginBottom={"2%"}
+      spacing={2}
       // width={"98%"}
       // marginLeft={"0.1em"}
     >
-      {/* <Grid item xs={0} md={2} lg={2}></Grid> */}
       <Grid item xs={12} lg={2} md={2}>
-        <Box sx={{ textAlign: "center" }}>
+        <Box>
           <FormControl fullWidth>
-            <Select value={age} onChange={handleChange}>
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+            <Select
+              value={cat}
+              onChange={handleChange}
+              style={{
+                textAlign: "center",
+              }}
+            >
+              <MenuItem value={0}>Name</MenuItem>
+              <MenuItem value={1}>Gender</MenuItem>
+              <MenuItem value={2}>Email</MenuItem>
             </Select>
           </FormControl>
         </Box>
       </Grid>
-      <Grid item xs={12} lg={10} md={10}>
-        <TextField fullWidth label="Search" variant="outlined" />
+      <Grid item xs={12} lg={8} md={8}>
+        <TextField
+          fullWidth
+          onChange={handleSearchText}
+          label="Search"
+          variant="outlined"
+          value={searchText}
+        />
+      </Grid>
+      <Grid item xs={12} lg={2} md={2}>
+        <Button
+          onClick={handleExport}
+          variant="contained"
+          fullWidth
+          style={{ height: "55px" }}
+        >
+          <CSVLink
+            {...generateExcel(data)}
+            style={{
+              color: "white",
+              textTransform: "none",
+              textDecoration: "none",
+            }}
+          >
+            Export CSV
+          </CSVLink>
+        </Button>
       </Grid>
     </Grid>
   );
