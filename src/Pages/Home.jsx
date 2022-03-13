@@ -23,6 +23,7 @@ import {
 } from "../components/getData";
 import TableHeader from "../components/TableHeader";
 import SearchHeader from "../components/SearchHeader";
+import SelectRows from "../components/SelectRows";
 
 const columns = [
   { id: "name", label: "Name", minWidth: 100, align: "left" },
@@ -126,6 +127,10 @@ export default function HomeTable() {
     }
   }
 
+  function handleTableCellClick(rId) {
+    console.log(rId);
+  }
+
   return (
     <Container maxWidth="lg">
       <SearchHeader
@@ -162,9 +167,16 @@ export default function HomeTable() {
                       tabIndex={-1}
                       key={rowIndex}
                     >
+                      {/* <SelectRows /> */}
                       {columns.map((column, columnIndex) => {
                         return (
-                          <TableCell key={columnIndex} align={column.align}>
+                          <TableCell
+                            onClick={() =>
+                              handleTableCellClick(rowIndex + page)
+                            }
+                            key={columnIndex}
+                            align={column.align}
+                          >
                             {columnData(column.id, rowIndex)}
                           </TableCell>
                         );

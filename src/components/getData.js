@@ -17,7 +17,7 @@ export const getData = (count) => {
           picture: element["picture"]["thumbnail"],
         });
       });
-      console.log(modData);
+
       res(modData);
     } catch (er) {
       rej(er);
@@ -28,13 +28,11 @@ export const getData = (count) => {
 export const searchName = (name, data) => {
   let newData = [];
   name = name.toLowerCase();
-
   data.forEach((value) => {
     let dataName = `${value["name"]["title"]} ${value["name"]["first"]} ${value["name"]["last"]}`;
     dataName = dataName.toLowerCase();
     if (dataName.includes(name)) newData.push(value);
   });
-
   return newData;
 };
 
@@ -45,7 +43,6 @@ export const searchGender = (gender, data) => {
     let temp = value["gender"].toLowerCase();
     if (temp.includes(gender)) newData.push(value);
   });
-
   return newData;
 };
 
@@ -56,7 +53,6 @@ export const searchEmail = (email, data) => {
     let temp = value["email"].toLowerCase();
     if (temp.includes(email)) newData.push(value);
   });
-
   return newData;
 };
 
